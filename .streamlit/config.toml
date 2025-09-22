@@ -1,0 +1,7 @@
+[theme]
+base="dark"
+primaryColor="#FFFFFF"          # white accents
+backgroundColor="#000000"       # pure black background
+secondaryBackgroundColor="#1A1A1A"  # dark grey panels
+textColor="#FFFFFF"             # white text
+font="sans serif"
