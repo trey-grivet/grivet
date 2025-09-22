@@ -1,0 +1,17 @@
+# Environment files
+.env
+ECHO is on.
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+ECHO is on.
+# Virtual environments
+.venv/
+venv/
+env/
+ECHO is on.
+# System files
+.DS_Store
+.idea/
+.vscode/
