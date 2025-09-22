@@ -32,7 +32,7 @@ if not APPSHEET_KEY:
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 st.set_page_config(page_title="Grivet Retail Sales Trainer", page_icon="Grivet B W.jpg")
-st.image("grivet black.png", width=100)
+st.image("grivet_black.png", width=100)
 st.title("Grivet Retail Sales Trainer")
 
 # =========================
