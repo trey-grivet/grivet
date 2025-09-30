@@ -167,6 +167,13 @@ if not APPSHEET_KEY:
 # Let SDK read the key from env
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
+with st.expander("Diagnostics (versions)"):
+    import openai, httpx, sys
+    st.write({
+        "python": sys.version.split()[0],
+        "openai": getattr(openai, "__version__", "unknown"),
+        "httpx": getattr(httpx, "__version__", "unknown"),
+    })
 # --- Single OpenAI client init ---
 client = OpenAI()
 # --- end OpenAI init ---
