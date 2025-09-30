@@ -167,13 +167,24 @@ if not APPSHEET_KEY:
 # Let SDK read the key from env
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
-with st.expander("Diagnostics (versions)"):
-    import openai, httpx, sys
-    st.write({
-        "python": sys.version.split()[0],
-        "openai": getattr(openai, "__version__", "unknown"),
-        "httpx": getattr(httpx, "__version__", "unknown"),
-    })
+# --- Diagnostics to logs only (place above client = OpenAI()) ---
+import logging, sys
+import openai, httpx
+
+log = logging.getLogger("diag")
+if not log.handlers:  # avoid duplicate handlers on Streamlit reruns
+    h = logging.StreamHandler()
+    f = logging.Formatter("%(levelname)s diag | %(message)s")
+    h.setFormatter(f)
+    log.addHandler(h)
+log.setLevel(logging.INFO)
+
+log.info("python=%s openai=%s httpx=%s",
+         sys.version.split()[0],
+         getattr(openai, "__version__", "unknown"),
+         getattr(httpx, "__version__", "unknown"))
+# --- end diagnostics ---
+
 # --- Single OpenAI client init ---
 client = OpenAI()
 # --- end OpenAI init ---
