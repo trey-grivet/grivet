@@ -174,6 +174,18 @@ if not (OPENAI_API_KEY.startswith("sk-") and len(OPENAI_API_KEY) > 40):
 
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 client = OpenAI()
+# --- OpenAI client init (safe) ---
+OPENAI_API_KEY = (os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", ""))
+OPENAI_API_KEY = str(OPENAI_API_KEY).strip()  # coerce to string, remove stray whitespace
+
+ok = isinstance(OPENAI_API_KEY, str) and OPENAI_API_KEY.startswith("sk-") and len(OPENAI_API_KEY) >= 40
+if not ok:
+    st.error('OPENAI_API_KEY looks invalid. In Settings → Secrets use exact TOML:\n\nOPENAI_API_KEY = "sk-..."\nAPPSHEET_KEY   = "..."')
+    st.stop()
+
+os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY  # let SDK read from env
+client = OpenAI()  # <-- this replaces your old `client = OpenAI()`
+# --- end OpenAI init ---
 
 st.set_page_config(page_title="Grivet Retail Sales Trainer", page_icon="Grivet B W.jpg")
 st.image("grivet_black.png", width=100)
