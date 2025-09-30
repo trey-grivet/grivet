@@ -1,17 +1,3 @@
-import sys, importlib.util as iu
-print("PY:", sys.version)
-print("dotenv spec exists?", iu.find_spec("dotenv") is not None)
-try:
-    import importlib.metadata as md
-    print("python-dotenv version:", md.version("python-dotenv"))
-    import dotenv
-    print("dotenv path:", dotenv.__file__)
-except Exception as e:
-    print("dotenv check failed:", repr(e))
-import streamlit as st, sys, importlib.util as iu
-st.caption(f"PY: {sys.version.split()[0]}")
-st.caption(f"dotenv importable? {iu.find_spec('dotenv') is not None}")
-
 import os
 import json
 import requests
@@ -20,14 +6,15 @@ import streamlit as st
 import re
 from datetime import datetime
 
+from dotenv import load_dotenv
+load_dotenv()
+from openai import OpenAI
+
 from scoring import (
     score_introduction, score_impression, score_discovery, score_solution,
     score_upselling, score_fullsolution, score_objections, score_closing,
     score_email, score_exit
 )
-
-from dotenv import load_dotenv
-from openai import OpenAI
 
 # ---- Upbeat, transcript-aware coaching notes ----
 PILLARS = ["Introduction","Impression","Discovery","Solution","Upselling","FullSolution",
