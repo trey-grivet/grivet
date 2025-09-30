@@ -1,3 +1,14 @@
+import sys, importlib.util as iu
+print("PY:", sys.version)
+print("dotenv spec exists?", iu.find_spec("dotenv") is not None)
+try:
+    import importlib.metadata as md
+    print("python-dotenv version:", md.version("python-dotenv"))
+    import dotenv
+    print("dotenv path:", dotenv.__file__)
+except Exception as e:
+    print("dotenv check failed:", repr(e))
+
 import os
 import json
 import requests
