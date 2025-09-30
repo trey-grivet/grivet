@@ -136,12 +136,27 @@ def build_notes_from_scores(parsed: dict, transcript: str, persona: str, custome
     if notes and notes[-1] not in ".!?":
         notes += "."
     return notes
-
 # =========================
 # ENV / CONFIG
 # =========================
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-APPSHEET_KEY = os.getenv("APPSHEET_KEY")
+import os
+import streamlit as st
+
+def get_secret(name: str, default: str | None = None):
+    # Prefer environment variable; fall back to Streamlit secrets
+    return os.getenv(name) or st.secrets.get(name, default)
+
+OPENAI_API_KEY = get_secret("OPENAI_API_KEY")
+APPSHEET_KEY   = get_secret("APPSHEET_KEY")
+
+# Optional: block the app with a friendly message if missing
+if not OPENAI_API_KEY:
+    st.error("Missing OPENAI_API_KEY. Add it in Streamlit → Settings → Secrets.")
+    st.stop()
+if not APPSHEET_KEY:
+    st.error("Missing APPSHEET_KEY. Add it in Streamlit → Settings → Secrets.")
+    st.stop()
+
 
 APPSHEET_URL = (
     "https://api.appsheet.com/api/v2/apps/320743da-c218-4adb-90bd-e0be74a146b9/"
@@ -151,13 +166,6 @@ APPSHEET_HEADERS = {
     "ApplicationAccessKey": APPSHEET_KEY or "",
     "Content-Type": "application/json",
 }
-
-# Fail early if keys are missing
-if not OPENAI_API_KEY:
-    st.error("Missing OPENAI_API_KEY in .env")
-if not APPSHEET_KEY:
-    st.error("Missing APPSHEET_KEY in .env")
-
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 st.set_page_config(page_title="Grivet Retail Sales Trainer", page_icon="Grivet B W.jpg")
