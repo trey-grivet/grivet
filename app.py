@@ -140,7 +140,6 @@ def build_notes_from_scores(parsed: dict, transcript: str, persona: str, custome
 # =========================
 # ENV / CONFIG
 # =========================
-load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 APPSHEET_KEY = os.getenv("APPSHEET_KEY")
 
