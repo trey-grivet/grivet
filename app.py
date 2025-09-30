@@ -137,60 +137,57 @@ def build_notes_from_scores(parsed: dict, transcript: str, persona: str, custome
         notes += "."
     return notes
 # =========================
-# ENV / CONFIG
+# ENV / CONFIG (single source of truth)
 # =========================
 import os
 import streamlit as st
+from openai import OpenAI
 
 def get_secret(name: str, default: str | None = None):
-    # Prefer environment variable; fall back to Streamlit secrets
-    return os.getenv(name) or st.secrets.get(name, default)
+    # Prefer environment var; fallback to Streamlit secrets
+    val = os.getenv(name)
+    if val is None:
+        val = st.secrets.get(name, default)
+    return (val or "").strip()
 
 OPENAI_API_KEY = get_secret("OPENAI_API_KEY")
 APPSHEET_KEY   = get_secret("APPSHEET_KEY")
 
-# Optional: block the app with a friendly message if missing
+# Fail fast with friendly messages
 if not OPENAI_API_KEY:
-    st.error("Missing OPENAI_API_KEY. Add it in Streamlit → Settings → Secrets.")
+    st.error('Missing OPENAI_API_KEY. In Streamlit → Settings → Secrets add:\n\nOPENAI_API_KEY = "sk-..."')
+    st.stop()
+if not (OPENAI_API_KEY.startswith("sk-") and len(OPENAI_API_KEY) > 40):
+    st.error('OPENAI_API_KEY looks invalid. Use exact TOML (quotes):\n\nOPENAI_API_KEY = "sk-..."')
     st.stop()
 if not APPSHEET_KEY:
-    st.error("Missing APPSHEET_KEY. Add it in Streamlit → Settings → Secrets.")
+    st.error('Missing APPSHEET_KEY. In Streamlit → Settings → Secrets add:\n\nAPPSHEET_KEY = "..."')
     st.stop()
 
+# Let SDK read the key from env
+os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+
+# --- Single OpenAI client init ---
+client = OpenAI()
+# --- end OpenAI init ---
 
 APPSHEET_URL = (
     "https://api.appsheet.com/api/v2/apps/320743da-c218-4adb-90bd-e0be74a146b9/"
     "tables/Grivet%20Retail%20Sales%20Trainer%20Data/Action"
 )
 APPSHEET_HEADERS = {
-    "ApplicationAccessKey": APPSHEET_KEY or "",
+    "ApplicationAccessKey": APPSHEET_KEY,
     "Content-Type": "application/json",
 }
-OPENAI_API_KEY = (os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")).strip()
-
-if not (OPENAI_API_KEY.startswith("sk-") and len(OPENAI_API_KEY) > 40):
-    st.error("OPENAI_API_KEY looks invalid. Check Settings → Secrets (use quotes).")
-    st.stop()
-
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
-client = OpenAI()
-# --- OpenAI client init (safe) ---
-OPENAI_API_KEY = (os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", ""))
-OPENAI_API_KEY = str(OPENAI_API_KEY).strip()  # coerce to string, remove stray whitespace
-
-ok = isinstance(OPENAI_API_KEY, str) and OPENAI_API_KEY.startswith("sk-") and len(OPENAI_API_KEY) >= 40
-if not ok:
-    st.error('OPENAI_API_KEY looks invalid. In Settings → Secrets use exact TOML:\n\nOPENAI_API_KEY = "sk-..."\nAPPSHEET_KEY   = "..."')
-    st.stop()
-
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY  # let SDK read from env
-client = OpenAI()  # <-- this replaces your old `client = OpenAI()`
-# --- end OpenAI init ---
-
 st.set_page_config(page_title="Grivet Retail Sales Trainer", page_icon="Grivet B W.jpg")
-st.image("grivet_black.png", width=100)
+
+# Safe image rendering
+from pathlib import Path
+if Path("grivet_black.png").exists():
+    st.image("grivet_black.png", width=100)
+
 st.title("Grivet Retail Sales Trainer")
-BUILD = "2025-09-30_01"
+BUILD = "2025-09-30"
 st.caption(f"Build: {BUILD}")
 
 # =========================
