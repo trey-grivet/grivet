@@ -8,6 +8,9 @@ try:
     print("dotenv path:", dotenv.__file__)
 except Exception as e:
     print("dotenv check failed:", repr(e))
+import streamlit as st, sys, importlib.util as iu
+st.caption(f"PY: {sys.version.split()[0]}")
+st.caption(f"dotenv importable? {iu.find_spec('dotenv') is not None}")
 
 import os
 import json
