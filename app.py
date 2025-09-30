@@ -166,7 +166,14 @@ APPSHEET_HEADERS = {
     "ApplicationAccessKey": APPSHEET_KEY or "",
     "Content-Type": "application/json",
 }
-client = OpenAI(api_key=OPENAI_API_KEY)
+OPENAI_API_KEY = (os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")).strip()
+
+if not (OPENAI_API_KEY.startswith("sk-") and len(OPENAI_API_KEY) > 40):
+    st.error("OPENAI_API_KEY looks invalid. Check Settings → Secrets (use quotes).")
+    st.stop()
+
+os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+client = OpenAI()
 
 st.set_page_config(page_title="Grivet Retail Sales Trainer", page_icon="Grivet B W.jpg")
 st.image("grivet_black.png", width=100)
