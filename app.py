@@ -166,6 +166,8 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 st.set_page_config(page_title="Grivet Retail Sales Trainer", page_icon="Grivet B W.jpg")
 st.image("grivet_black.png", width=100)
 st.title("Grivet Retail Sales Trainer")
+BUILD = "2025-09-30_01"
+st.caption(f"Build: {BUILD}")
 
 # =========================
 # SESSION STATE
