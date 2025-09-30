@@ -1,5 +1,6 @@
 streamlit==1.37.1
 openai==1.42.0
-python-dotenv==1.0.1 # rebuild
+python-dotenv==1.0.1
 requests==2.31.0
 pandas==2.2.2
+httpx>=0.25,<1
