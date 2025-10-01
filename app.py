@@ -433,7 +433,7 @@ else:
     if not st.session_state.started:
         st.session_state.messages.append({
             "role": "assistant",
-            "content": f"Welcome {employee_name}! The role play will begin with you approaching a customer. I’ll act as a customer. Go ahead and greet me when you’re ready. Type /score to end the role play, receive your session score, feeback and view the Leaderboard."
+            "content": f"Welcome {employee_name}! The role play will begin with you approaching a customer. I’ll act as a customer. Go ahead and greet me when you’re ready. At anytime type /score to end the role play and receive your session score with feedback."
         })
         st.session_state.started = True
         st.rerun()
